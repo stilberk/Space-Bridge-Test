@@ -64,7 +64,7 @@ namespace Space_Bridge_Test
                         }
                         if (dollars[i].X < Console.WindowWidth)
                         {
-                            if (dollars[i].X == 15 || dollars[i].X == 25 || dollars[i].X == 24 || dollars[i].X == 33 || dollars[i].X ==34)
+                            if (dollars[i].X == 15 || dollars[i].X == 25 || dollars[i].X == 24 || dollars[i].X == 33 || dollars[i].X == 34)
                             {
                                 dollars[i].X--;
                             }
@@ -143,7 +143,7 @@ namespace Space_Bridge_Test
                         PrintOnPosition(cosmo.X, cosmo.Y, cosmo.Symbol, cosmo.Color);
                     }
                 }
-                PrintHoles();  
+                PrintHoles();
                 //8.print our object
                 PrintOnPosition(bridge.X, bridge.Y, bridge.Symbol, bridge.Color);
                 //printing points
@@ -188,7 +188,7 @@ namespace Space_Bridge_Test
                     }
                 }
             }
-            
+
         }
 
         /// <summary>
