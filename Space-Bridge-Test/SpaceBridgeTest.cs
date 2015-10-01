@@ -8,6 +8,7 @@ namespace Space_Bridge_Test
     {
         public static void Main()
         {
+
             //2.Draw playfield
             const int playfieldWidth = 35;
             Console.BufferHeight = Console.WindowHeight = 10;//This is the size of the console window height.
@@ -15,19 +16,20 @@ namespace Space_Bridge_Test
             Console.BackgroundColor = ConsoleColor.Gray;//color of playfield
 
             int xCoordinate = 23;
-            int yCoordinate = Console.WindowHeight - 3;
+            int yCoordinate = Console.WindowHeight - 2;
             string symbolForBridge = "---";
             ConsoleColor colorOfBridge = ConsoleColor.DarkRed;
             Object bridge = new Object(xCoordinate, yCoordinate, symbolForBridge, colorOfBridge, false);
             bool bridgeHitted = false;
-            Object cosmonaut = new Object(9, 0, "$", ConsoleColor.Green, bridgeHitted);
+            Object cash = new Object(9, 0, "$", ConsoleColor.Green, bridgeHitted);
             int lives = 3;
             int points = 0;
             double speed = 10.0;
-            double acceleration = 0.01;
-            List<Object> cosmonauts = new List<Object>();
-            cosmonauts.Add(cosmonaut);
+            double acceleration = 0.2;
+            List<Object> dollars = new List<Object>();
+            dollars.Add(cash);
             Random rnd = new Random();
+
             while (true)
             {
                 speed += acceleration;
@@ -36,50 +38,50 @@ namespace Space_Bridge_Test
                     speed = 400;
                 }
                 Thread.Sleep(500 - (int)speed);
-                int chance = rnd.Next(0, 100);
+
+                int chance = rnd.Next(0, 50);
                 //Add more cosmonauts
-                if (points > 2 && chance < 70 && cosmonauts.Count < 3)
+                if (points > 2 && chance < 70 && dollars.Count < 3)
                 {
                     //check if it is possible to be played
-                    if (cosmonauts.TrueForAll(x => x.X < 90))
+                    if (dollars.TrueForAll(x => x.X < chance))
                     {
                         Object cos = new Object(9, 0, "$", ConsoleColor.Green, false);
-                        cosmonauts.Add(cos);
+                        dollars.Add(cos);
                     }
                 }
                 //4.Move the bridge
                 MoveTheBridge(bridge, playfieldWidth);
                 //Moving our alien....
-                for (int i = 0; i < cosmonauts.Count; i++)
+                for (int i = 0; i < dollars.Count; i++)
                 {
-                    bridgeHitted = cosmonauts[i].BridgeHitted;
+                    bridgeHitted = dollars[i].BridgeHitted;
                     if (!bridgeHitted)
                     {
-                        if (cosmonauts[i].Y < Console.WindowHeight)
+                        if (dollars[i].Y < Console.WindowHeight)
                         {
-                            cosmonauts[i].Y++;
+                            dollars[i].Y++;
                         }
-                        if (cosmonauts[i].X < Console.WindowWidth)
+                        if (dollars[i].X < Console.WindowWidth)
                         {
-                            if (cosmonauts[i].X == 15)
+                            if (dollars[i].X == 15 || dollars[i].X == 25 || dollars[i].X == 24 || dollars[i].X == 33 || dollars[i].X ==34)
                             {
-                                cosmonauts[i].X--;
+                                dollars[i].X--;
                             }
-                            cosmonauts[i].X++;
+                            dollars[i].X++;
                         }
-                        if (cosmonauts[i].Y == bridge.Y && cosmonauts[i].X == bridge.X + 1)
+                        if (dollars[i].Y == bridge.Y && dollars[i].X == bridge.X + 1)
                         {
                             points++;
-                            cosmonauts[i].BridgeHitted = true;
-
+                            dollars[i].BridgeHitted = true;
                         }
-                        if (cosmonauts[i].Y > Console.WindowHeight - 1)
+                        if (dollars[i].Y > Console.WindowHeight - 1)
                         {
                             lives--;
-                            cosmonauts.Remove(cosmonauts[i]);
-                            if (cosmonauts.Count == 0)
+                            dollars.Remove(dollars[i]);
+                            if (dollars.Count == 0)
                             {
-                                cosmonauts.Add(new Object(9, 0, "$", ConsoleColor.Green, bridgeHitted));
+                                dollars.Add(new Object(9, 0, "$", ConsoleColor.Green, bridgeHitted));
                             }
                             if (lives == 0)
                             {
@@ -97,32 +99,32 @@ namespace Space_Bridge_Test
                     break;
                 }
                 //Moving the opposite direction after bridge was hitted
-                for (int i = 0; i < cosmonauts.Count; i++)
+                for (int i = 0; i < dollars.Count; i++)
                 {
-                    bridgeHitted = cosmonauts[i].BridgeHitted;
+                    bridgeHitted = dollars[i].BridgeHitted;
                     if (bridgeHitted)
                     {
-                        if (cosmonauts[i].Y > Console.WindowHeight - 7)
+                        if (dollars[i].Y > Console.WindowHeight - 7)
                         {
-                            cosmonauts[i].Y--;
+                            dollars[i].Y--;
                         }
                         else
                         {
-                            cosmonauts[i].BridgeHitted = false;
+                            dollars[i].BridgeHitted = false;
                         }
-                        if (cosmonauts[i].X < Console.WindowWidth)
+                        if (dollars[i].X < Console.WindowWidth)
                         {
-                            cosmonauts[i].X++;
+                            dollars[i].X++;
                         }
                     }
                 }
                 //remove objects which are outside the field and create new      
-                for (int i = 0; i < cosmonauts.Count; i++)
+                for (int i = 0; i < dollars.Count; i++)
                 {
-                    if (cosmonauts[i].X > 42)
+                    if (dollars[i].X > 42)
                     {
-                        cosmonauts.Remove(cosmonauts[i]);
-                        cosmonauts.Add(new Object(9, 0, "$", ConsoleColor.Green, false));
+                        dollars.Remove(dollars[i]);
+                        dollars.Add(new Object(9, 0, "$", ConsoleColor.Green, false));
                     }
                 }
                 //7.Clear the console with 
@@ -134,24 +136,31 @@ namespace Space_Bridge_Test
                 //Print Lives
                 PrintOnPosition(41, 1, "Lives:" + lives.ToString(), ConsoleColor.DarkRed);
                 //Print other object  
-                foreach (var cosmo in cosmonauts)
+                foreach (var cosmo in dollars)
                 {
                     if (cosmo.X < 48 && cosmo.Y < 10)
                     {
                         PrintOnPosition(cosmo.X, cosmo.Y, cosmo.Symbol, cosmo.Color);
                     }
                 }
+                PrintHoles();  
                 //8.print our object
                 PrintOnPosition(bridge.X, bridge.Y, bridge.Symbol, bridge.Color);
-
                 //printing points
-                PrintOnPosition(41, 0, "P:" + points, ConsoleColor.DarkRed);
+                PrintOnPosition(41, 0, "$:" + points, ConsoleColor.DarkRed);
 
                 //Print board for the field
-                PrintTheSideBoard(8);
-                PrintTheSideBoard(40);
+                //PrintTheSideBoard(8);
+                //PrintTheSideBoard(40);
             }
             PrintOnPosition(8, 5, "Game Over!!!", ConsoleColor.DarkRed);
+        }
+
+        private static void PrintHoles()
+        {
+            PrintOnPosition(13, 9, "|   | ", ConsoleColor.DarkRed);
+            PrintOnPosition(22, 9, "|   | ", ConsoleColor.DarkRed);
+            PrintOnPosition(31, 9, "|   | ", ConsoleColor.DarkRed);
         }
 
         /// <summary>
@@ -164,10 +173,6 @@ namespace Space_Bridge_Test
             while (Console.KeyAvailable)
             {
                 ConsoleKeyInfo pressedKey = Console.ReadKey(true);
-                while (Console.KeyAvailable)
-                {
-                    Console.ReadKey(true);
-                }
                 if (pressedKey.Key == ConsoleKey.LeftArrow)
                 {
                     if (userObject.X > 15)
@@ -183,6 +188,7 @@ namespace Space_Bridge_Test
                     }
                 }
             }
+            
         }
 
         /// <summary>
